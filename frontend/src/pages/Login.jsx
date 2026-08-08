@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaPlus, FaSpinner, FaUserShield } from 'react-icons/fa';
 import SectionHeader from '../components/SectionHeader';
 import { createCondition, findPatient } from '../utils/patientStorage';
+import { getCitiesForState, INDIA_STATES } from '../data/content';
 
 const emptyLoginForm = {
   email: '',
@@ -13,6 +14,7 @@ const emptySignupForm = {
   fullName: '',
   email: '',
   password: '',
+  state: '',
   city: '',
   allergies: '',
   medications: '',
@@ -88,11 +90,28 @@ function Login({ onLogin }) {
     if (!signupForm.fullName.trim()) nextErrors.fullName = 'Enter your full name.';
     if (!signupForm.email.includes('@')) nextErrors.email = 'Enter a valid email address.';
     if (signupForm.password.length < 6) nextErrors.password = 'Use at least 6 characters.';
-    if (!signupForm.city.trim()) nextErrors.city = 'Enter your city.';
+    if (!signupForm.state) nextErrors.state = 'Select your state.';
+    if (!signupForm.city) nextErrors.city = 'Select your city.';
     if (signupConditions.length === 0) nextErrors.conditions = 'Add at least one condition or write No known conditions.';
     if (findPatient(signupForm.email)) nextErrors.email = 'An account with this email already exists.';
 
     return nextErrors;
+  };
+
+  const signupCityOptions = useMemo(
+    () => (signupForm.state ? getCitiesForState(signupForm.state) : []),
+    [signupForm.state],
+  );
+
+  const handleStateSelect = (e) => {
+    const { value } = e.target;
+    setSignupForm((f) => ({ ...f, state: value, city: '' }));
+    setErrors((err) => {
+      const next = { ...err };
+      delete next.state;
+      delete next.city;
+      return next;
+    });
   };
 
   const handleSignup = (event) => {
@@ -111,7 +130,8 @@ function Login({ onLogin }) {
         fullName: signupForm.fullName.trim(),
         email: signupForm.email.trim().toLowerCase(),
         password: signupForm.password,
-        city: signupForm.city.trim(),
+        state: signupForm.state,
+        city: signupForm.city,
         allergies: signupForm.allergies.trim(),
         medications: signupForm.medications.trim(),
         medicalConditions: signupConditions,
@@ -174,12 +194,36 @@ function Login({ onLogin }) {
                     {errors.fullName && <span className="text-xs font-medium text-rose-600">{errors.fullName}</span>}
                   </label>
                   <label className="grid gap-2 text-sm font-medium text-slate-700">
-                    City
-                    <input name="city" value={signupForm.city} onChange={updateSignupField} className={`rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4 focus:ring-teal-100 ${errors.city ? 'border-rose-400' : 'border-slate-300 focus:border-teal-500'}`} placeholder="Mumbai" />
-                    {errors.city && <span className="text-xs font-medium text-rose-600">{errors.city}</span>}
+                    State / UT
+                    <select
+                      name="state"
+                      value={signupForm.state}
+                      onChange={handleStateSelect}
+                      className={`rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4 focus:ring-teal-100 ${errors.state ? 'border-rose-400' : 'border-slate-300 focus:border-teal-500'}`}
+                    >
+                      <option value="">Select state</option>
+                      {INDIA_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    {errors.state && <span className="text-xs font-medium text-rose-600">{errors.state}</span>}
                   </label>
                 </div>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <label className="grid gap-2 text-sm font-medium text-slate-700">
+                    City
+                    <select
+                      name="city"
+                      value={signupForm.city}
+                      onChange={updateSignupField}
+                      disabled={!signupForm.state}
+                      className={`rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4 focus:ring-teal-100 ${errors.city ? 'border-rose-400' : 'border-slate-300 focus:border-teal-500'} disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed`}
+                    >
+                      <option value="">Select city</option>
+                      {signupCityOptions.map((c) => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                    {errors.city && <span className="text-xs font-medium text-rose-600">{errors.city}</span>}
+                  </label>
 
+                </div>
                 <div className="grid gap-5 sm:grid-cols-2">
                   <label className="grid gap-2 text-sm font-medium text-slate-700">
                     Email

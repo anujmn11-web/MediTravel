@@ -86,8 +86,11 @@ function MedicalHistory({ currentUser, onUserUpdate }) {
 
             <div className="mt-8 grid gap-4 text-sm">
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="font-semibold text-slate-900">City</p>
-                <p className="mt-1 text-slate-600">{currentUser.city}</p>
+                <p className="font-semibold text-slate-900">Location</p>
+                <p className="mt-1 text-slate-600">
+                  {currentUser.city}
+                  {currentUser.state ? `, ${currentUser.state}` : ''}
+                </p>
               </div>
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                 <p className="font-semibold text-slate-900">Allergies</p>

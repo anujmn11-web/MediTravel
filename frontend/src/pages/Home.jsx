@@ -24,8 +24,8 @@ function Home() {
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.25em] text-teal-600">Why it matters</p>
-          <h2 className="mt-4 text-3xl font-semibold text-slate-900 sm:text-4xl">Modern healthcare support designed for every journey.</h2>
-          <p className="mt-4 text-lg leading-8 text-slate-600">The platform combines trusted provider discovery, emergency response, and future-focused recommendations into one elegant experience.</p>
+          <h2 className="mt-4 text-3xl font-semibold text-slate-900 sm:text-4xl">Modern healthcare support designed for every journey across India.</h2>
+          <p className="mt-4 text-lg leading-8 text-slate-600">The platform combines trusted provider discovery across all 36 states and UTs, emergency response, and future-focused recommendations into one elegant experience.</p>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {features.map((feature) => (<FeatureCard key={feature.title} {...feature} />))}
@@ -44,7 +44,7 @@ function Home() {
                   <div className="text-xs uppercase tracking-[0.2em] text-teal-500">Step {idx + 1}</div>
                   <div className="mt-2">{step}</div>
                 </div>
-                {idx < steps.length - 1 && <div className="hidden text-2xl text-slate-400 lg:block">↓</div>}
+                {idx < steps.length - 1 && <div className="hidden text-2xl text-slate-400 lg:block">→</div>}
               </div>
             ))}
           </div>
