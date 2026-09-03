@@ -13,10 +13,13 @@ const emptyDraft = {
 };
 
 const TIER_LABELS = { 1: 'Metro', 2: 'Major City', 3: 'Town' };
-const TIER_COLORS = {
-  1: 'bg-violet-100 text-violet-700',
-  2: 'bg-sky-100 text-sky-700',
-  3: 'bg-amber-100 text-amber-700',
+const getTierStyles = (tier) => {
+  const colors = {
+    1: { bg: '#f3e8ff', text: '#9333ea' },
+    2: { bg: '#e0f2fe', text: '#0284c7' },
+    3: { bg: '#fef3c7', text: '#ca8a04' },
+  };
+  return colors[tier] || colors[1];
 };
 
 function getTodayDate() {
@@ -207,7 +210,7 @@ function Doctors() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
+    <main style={{ backgroundColor: 'var(--color-bg)' }} className="min-h-screen px-4 py-20 sm:px-6 lg:px-8 transition-colors">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           eyebrow="Find Doctors"
@@ -309,7 +312,7 @@ function Doctors() {
             <div className="mt-8 grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
               {pagedDoctors.map((doctor) => {
                 const hasAppointment = bookedDoctorIds.has(doctor.id);
-                const tierColor = TIER_COLORS[doctor.tier] || TIER_COLORS[2];
+                const tierStyles = getTierStyles(doctor.tier);
                 const tierLabel = TIER_LABELS[doctor.tier] || 'City';
 
                 return (
@@ -325,7 +328,7 @@ function Doctors() {
                           <FaStar className="h-3 w-3" />
                           {doctor.rating}
                         </span>
-                        <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${tierColor}`}>
+                        <span className="rounded-full px-2 py-0.5 text-xs font-semibold" style={{ backgroundColor: tierStyles.bg, color: tierStyles.text }}>
                           {tierLabel}
                         </span>
                       </div>

@@ -163,12 +163,12 @@ function Login({ onLogin }) {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
+    <main style={{ backgroundColor: 'var(--color-bg)' }} className="min-h-screen px-4 py-20 sm:px-6 lg:px-8 transition-colors">
       <div className="mx-auto max-w-5xl">
         <SectionHeader eyebrow="Patient Account" title="Create your profile with medical history." description="Save your conditions during signup, then keep your health record updated as your needs change." />
 
-        <section className="mt-10 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
-          <div className="grid border-b border-slate-200 bg-slate-50 p-2 sm:grid-cols-2">
+        <section style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)' }} className="mt-10 overflow-hidden rounded-[2rem] border shadow-sm">
+          <div style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg-secondary)' }} className="grid border-b p-2 sm:grid-cols-2">
             {['signup', 'login'].map((item) => (
               <button
                 key={item}
@@ -177,7 +177,11 @@ function Login({ onLogin }) {
                   setMode(item);
                   setErrors({});
                 }}
-                className={`rounded-full px-5 py-3 text-sm font-semibold transition ${mode === item ? 'bg-teal-600 text-white shadow-lg shadow-teal-100' : 'text-slate-600 hover:bg-white'}`}
+                style={{
+                  backgroundColor: mode === item ? 'var(--color-accent)' : 'transparent',
+                  color: mode === item ? 'white' : 'var(--color-text-secondary)',
+                }}
+                className="rounded-full px-5 py-3 text-sm font-semibold transition hover:opacity-80"
               >
                 {item === 'signup' ? 'Sign Up' : 'Login'}
               </button>
@@ -188,78 +192,116 @@ function Login({ onLogin }) {
             <form onSubmit={handleSignup} className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_0.85fr]">
               <div className="grid gap-5">
                 <div className="grid gap-5 sm:grid-cols-2">
-                  <label className="grid gap-2 text-sm font-medium text-slate-700">
+                  <label style={{ color: 'var(--color-text)' }} className="grid gap-2 text-sm font-medium">
                     Full name
-                    <input name="fullName" value={signupForm.fullName} onChange={updateSignupField} className={`rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4 focus:ring-teal-100 ${errors.fullName ? 'border-rose-400' : 'border-slate-300 focus:border-teal-500'}`} placeholder="Patient name" />
-                    {errors.fullName && <span className="text-xs font-medium text-rose-600">{errors.fullName}</span>}
+                    <input name="fullName" value={signupForm.fullName} onChange={updateSignupField} style={{
+                      borderColor: errors.fullName ? 'var(--color-danger)' : 'var(--color-border)',
+                      backgroundColor: 'var(--color-surface)',
+                      color: 'var(--color-text)',
+                    }} className="rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4" placeholder="Patient name" />
+                    {errors.fullName && <span style={{ color: 'var(--color-danger)' }} className="text-xs font-medium">{errors.fullName}</span>}
                   </label>
-                  <label className="grid gap-2 text-sm font-medium text-slate-700">
+                  <label style={{ color: 'var(--color-text)' }} className="grid gap-2 text-sm font-medium">
                     State / UT
                     <select
                       name="state"
                       value={signupForm.state}
                       onChange={handleStateSelect}
-                      className={`rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4 focus:ring-teal-100 ${errors.state ? 'border-rose-400' : 'border-slate-300 focus:border-teal-500'}`}
+                      style={{
+                        borderColor: errors.state ? 'var(--color-danger)' : 'var(--color-border)',
+                        backgroundColor: 'var(--color-surface)',
+                        color: 'var(--color-text)',
+                      }}
+                      className="rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4"
                     >
                       <option value="">Select state</option>
                       {INDIA_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
-                    {errors.state && <span className="text-xs font-medium text-rose-600">{errors.state}</span>}
+                    {errors.state && <span style={{ color: 'var(--color-danger)' }} className="text-xs font-medium">{errors.state}</span>}
                   </label>
                 </div>
                 <div className="grid gap-5 sm:grid-cols-2">
-                  <label className="grid gap-2 text-sm font-medium text-slate-700">
+                  <label style={{ color: 'var(--color-text)' }} className="grid gap-2 text-sm font-medium">
                     City
                     <select
                       name="city"
                       value={signupForm.city}
                       onChange={updateSignupField}
                       disabled={!signupForm.state}
-                      className={`rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4 focus:ring-teal-100 ${errors.city ? 'border-rose-400' : 'border-slate-300 focus:border-teal-500'} disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed`}
+                      style={{
+                        borderColor: errors.city ? 'var(--color-danger)' : 'var(--color-border)',
+                        backgroundColor: 'var(--color-surface)',
+                        color: 'var(--color-text)',
+                      }}
+                      className="rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4 disabled:opacity-50"
                     >
                       <option value="">Select city</option>
                       {signupCityOptions.map((c) => <option key={c} value={c}>{c}</option>)}
                     </select>
-                    {errors.city && <span className="text-xs font-medium text-rose-600">{errors.city}</span>}
+                    {errors.city && <span style={{ color: 'var(--color-danger)' }} className="text-xs font-medium">{errors.city}</span>}
                   </label>
 
                 </div>
                 <div className="grid gap-5 sm:grid-cols-2">
-                  <label className="grid gap-2 text-sm font-medium text-slate-700">
+                  <label style={{ color: 'var(--color-text)' }} className="grid gap-2 text-sm font-medium">
                     Email
-                    <input name="email" type="email" value={signupForm.email} onChange={updateSignupField} className={`rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4 focus:ring-teal-100 ${errors.email ? 'border-rose-400' : 'border-slate-300 focus:border-teal-500'}`} placeholder="you@example.com" />
-                    {errors.email && <span className="text-xs font-medium text-rose-600">{errors.email}</span>}
+                    <input name="email" type="email" value={signupForm.email} onChange={updateSignupField} style={{
+                      borderColor: errors.email ? 'var(--color-danger)' : 'var(--color-border)',
+                      backgroundColor: 'var(--color-surface)',
+                      color: 'var(--color-text)',
+                    }} className="rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4" placeholder="you@example.com" />
+                    {errors.email && <span style={{ color: 'var(--color-danger)' }} className="text-xs font-medium">{errors.email}</span>}
                   </label>
-                  <label className="grid gap-2 text-sm font-medium text-slate-700">
+                  <label style={{ color: 'var(--color-text)' }} className="grid gap-2 text-sm font-medium">
                     Password
-                    <input name="password" type="password" value={signupForm.password} onChange={updateSignupField} className={`rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4 focus:ring-teal-100 ${errors.password ? 'border-rose-400' : 'border-slate-300 focus:border-teal-500'}`} placeholder="Minimum 6 characters" />
-                    {errors.password && <span className="text-xs font-medium text-rose-600">{errors.password}</span>}
+                    <input name="password" type="password" value={signupForm.password} onChange={updateSignupField} style={{
+                      borderColor: errors.password ? 'var(--color-danger)' : 'var(--color-border)',
+                      backgroundColor: 'var(--color-surface)',
+                      color: 'var(--color-text)',
+                    }} className="rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4" placeholder="Minimum 6 characters" />
+                    {errors.password && <span style={{ color: 'var(--color-danger)' }} className="text-xs font-medium">{errors.password}</span>}
                   </label>
                 </div>
 
-                <label className="grid gap-2 text-sm font-medium text-slate-700">
+                <label style={{ color: 'var(--color-text)' }} className="grid gap-2 text-sm font-medium">
                   Allergies
-                  <textarea name="allergies" rows="3" value={signupForm.allergies} onChange={updateSignupField} className="resize-none rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-100" placeholder="Penicillin, dust, peanuts" />
+                  <textarea name="allergies" rows="3" value={signupForm.allergies} onChange={updateSignupField} style={{
+                    borderColor: 'var(--color-border)',
+                    backgroundColor: 'var(--color-surface)',
+                    color: 'var(--color-text)',
+                  }} className="resize-none rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4" placeholder="Penicillin, dust, peanuts" />
                 </label>
 
-                <label className="grid gap-2 text-sm font-medium text-slate-700">
+                <label style={{ color: 'var(--color-text)' }} className="grid gap-2 text-sm font-medium">
                   Current medications
-                  <textarea name="medications" rows="3" value={signupForm.medications} onChange={updateSignupField} className="resize-none rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-100" placeholder="Medicine name, dosage, frequency" />
+                  <textarea name="medications" rows="3" value={signupForm.medications} onChange={updateSignupField} style={{
+                    borderColor: 'var(--color-border)',
+                    backgroundColor: 'var(--color-surface)',
+                    color: 'var(--color-text)',
+                  }} className="resize-none rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4" placeholder="Medicine name, dosage, frequency" />
                 </label>
               </div>
 
-              <div className="rounded-3xl border border-teal-100 bg-teal-50 p-5">
-                <div className="flex items-center gap-3 text-teal-700">
+              <div style={{ borderColor: 'var(--color-accent-light)', backgroundColor: 'var(--color-accent-light)' }} className="rounded-3xl border p-5">
+                <div style={{ color: 'var(--color-accent)' }} className="flex items-center gap-3">
                   <FaUserShield />
-                  <h2 className="text-lg font-semibold text-slate-900">Medical conditions</h2>
+                  <h2 style={{ color: 'var(--color-text)' }} className="text-lg font-semibold">Medical conditions</h2>
                 </div>
-                <p className="mt-2 text-sm text-slate-600">{conditionCountLabel}</p>
+                <p style={{ color: 'var(--color-text-secondary)' }} className="mt-2 text-sm">{conditionCountLabel}</p>
 
                 <div className="mt-5 grid gap-3">
-                  <input name="name" value={conditionForm.name} onChange={updateConditionField} className={`rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4 focus:ring-teal-100 ${errors.conditions ? 'border-rose-400' : 'border-slate-300 focus:border-teal-500'}`} placeholder="Asthma, diabetes, migraine" />
-                  <textarea name="details" rows="3" value={conditionForm.details} onChange={updateConditionField} className="resize-none rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-100" placeholder="Diagnosis year, severity, doctor advice" />
-                  {errors.conditions && <span className="text-xs font-medium text-rose-600">{errors.conditions}</span>}
-                  <button type="button" onClick={addSignupCondition} className="inline-flex items-center justify-center gap-2 rounded-full border border-teal-200 bg-white px-5 py-3 text-sm font-semibold text-teal-700 transition hover:border-teal-400">
+                  <input name="name" value={conditionForm.name} onChange={updateConditionField} style={{
+                    borderColor: errors.conditions ? 'var(--color-danger)' : 'var(--color-border)',
+                    backgroundColor: 'var(--color-surface)',
+                    color: 'var(--color-text)',
+                  }} className="rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4" placeholder="Asthma, diabetes, migraine" />
+                  <textarea name="details" rows="3" value={conditionForm.details} onChange={updateConditionField} style={{
+                    borderColor: 'var(--color-border)',
+                    backgroundColor: 'var(--color-surface)',
+                    color: 'var(--color-text)',
+                  }} className="resize-none rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4" placeholder="Diagnosis year, severity, doctor advice" />
+                  {errors.conditions && <span style={{ color: 'var(--color-danger)' }} className="text-xs font-medium">{errors.conditions}</span>}
+                  <button type="button" onClick={addSignupCondition} style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)', color: 'var(--color-accent)' }} className="inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 text-sm font-semibold transition hover:opacity-80">
                     <FaPlus />
                     Add condition
                   </button>
@@ -268,33 +310,49 @@ function Login({ onLogin }) {
                 {signupConditions.length > 0 && (
                   <div className="mt-5 space-y-3">
                     {signupConditions.map((condition) => (
-                      <div key={condition.id} className="rounded-2xl border border-teal-100 bg-white p-4">
+                      <div key={condition.id} style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)' }} className="rounded-2xl border p-4">
                         <div className="flex items-start justify-between gap-3">
                           <div>
-                            <p className="font-semibold text-slate-900">{condition.name}</p>
-                            {condition.details && <p className="mt-1 text-sm text-slate-600">{condition.details}</p>}
+                            <p style={{ color: 'var(--color-text)' }} className="font-semibold">{condition.name}</p>
+                            {condition.details && <p style={{ color: 'var(--color-text-secondary)' }} className="mt-1 text-sm">{condition.details}</p>}
                           </div>
-                          <button type="button" onClick={() => removeSignupCondition(condition.id)} className="text-xs font-semibold text-rose-600">Remove</button>
+                          <button type="button" onClick={() => removeSignupCondition(condition.id)} style={{ color: 'var(--color-danger)' }} className="text-xs font-semibold">Remove</button>
                         </div>
                       </div>
                     ))}
                   </div>
                 )}
 
-                <button type="submit" disabled={isSubmitting} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-100 transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-teal-400">
+                <button type="submit" disabled={isSubmitting} style={{ 
+                  backgroundColor: 'var(--color-accent)',
+                  boxShadow: '0 4px 15px rgba(13, 148, 136, 0.3)',
+                  transition: 'all 0.3s ease'
+                }} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-sm font-semibold text-white shadow-lg transform hover:scale-105 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed">
                   {isSubmitting ? <FaSpinner className="animate-spin" /> : <FaUserShield />}
-                  {isSubmitting ? 'Creating profile' : 'Create patient profile'}
+                  {isSubmitting ? 'Creating profile...' : 'Create patient profile'}
                 </button>
               </div>
             </form>
           ) : (
             <form onSubmit={handleLogin} className="mx-auto grid max-w-lg gap-5 p-6 sm:p-8">
-              {errors.login && <div className="rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-medium text-rose-700">{errors.login}</div>}
-              <input name="email" value={loginForm.email} onChange={updateLoginField} type="email" placeholder="Email" className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-100" required />
-              <input name="password" value={loginForm.password} onChange={updateLoginField} type="password" placeholder="Password" className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-100" required />
-              <button disabled={isSubmitting} className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-teal-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-teal-500 disabled:cursor-not-allowed disabled:bg-teal-400">
+              {errors.login && <div style={{ borderColor: 'var(--color-danger-light)', backgroundColor: 'var(--color-danger-light)', color: 'var(--color-danger)' }} className="rounded-2xl border p-4 text-sm font-medium">{errors.login}</div>}
+              <input name="email" value={loginForm.email} onChange={updateLoginField} type="email" placeholder="Email" style={{
+                borderColor: 'var(--color-border)',
+                backgroundColor: 'var(--color-surface)',
+                color: 'var(--color-text)',
+              }} className="w-full rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4" required />
+              <input name="password" value={loginForm.password} onChange={updateLoginField} type="password" placeholder="Password" style={{
+                borderColor: 'var(--color-border)',
+                backgroundColor: 'var(--color-surface)',
+                color: 'var(--color-text)',
+              }} className="w-full rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4" required />
+              <button disabled={isSubmitting} style={{ 
+                backgroundColor: 'var(--color-accent)',
+                boxShadow: '0 4px 15px rgba(13, 148, 136, 0.3)',
+                transition: 'all 0.3s ease'
+              }} className="inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-sm font-semibold text-white transform hover:scale-105 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed">
                 {isSubmitting && <FaSpinner className="animate-spin" />}
-                {isSubmitting ? 'Opening profile' : 'Login'}
+                {isSubmitting ? 'Opening profile...' : 'Login'}
               </button>
             </form>
           )}

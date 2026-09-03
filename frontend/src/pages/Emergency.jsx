@@ -33,7 +33,7 @@ function Emergency() {
   );
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
+    <main style={{ backgroundColor: 'var(--color-bg)' }} className="min-h-screen px-4 py-20 sm:px-6 lg:px-8 transition-colors">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           eyebrow="Emergency"
@@ -45,8 +45,8 @@ function Emergency() {
           {/* Left: contacts */}
           <div className="space-y-6">
             {/* National hotlines */}
-            <div className="rounded-[2rem] border border-rose-100 bg-rose-50 p-8 shadow-sm">
-              <div className="flex items-center gap-3 text-rose-700">
+            <div style={{ borderColor: 'var(--color-danger-light)', backgroundColor: 'var(--color-danger-light)' }} className="rounded-[2rem] border p-8 shadow-sm">
+              <div style={{ color: 'var(--color-danger)' }} className="flex items-center gap-3">
                 <FaPhoneAlt />
                 <h3 className="text-xl font-semibold">National emergency contacts</h3>
               </div>
@@ -54,19 +54,26 @@ function Emergency() {
                 {nationalHotlines.map((item) => (
                   <div
                     key={item.name}
-                    className={`rounded-2xl border p-5 ${item.highlight ? 'border-rose-300 bg-rose-100' : 'border-rose-200 bg-white'}`}
+                    style={{
+                      borderColor: item.highlight ? 'var(--color-danger)' : 'var(--color-border)',
+                      backgroundColor: item.highlight ? 'rgba(220, 38, 38, 0.1)' : 'var(--color-surface)',
+                    }}
+                    className="rounded-2xl border p-5"
                   >
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div>
-                        <p className="text-base font-semibold text-slate-900">{item.name}</p>
-                        <p className="mt-1 text-sm text-slate-600">{item.detail}</p>
+                        <p style={{ color: 'var(--color-text)' }} className="text-base font-semibold">{item.name}</p>
+                        <p style={{ color: 'var(--color-text-secondary)' }} className="mt-1 text-sm">{item.detail}</p>
                       </div>
                       <a
                         href={`tel:${item.number.replace(/[^\d+]/g, '')}`}
+                        style={{
+                          backgroundColor: item.highlight ? 'var(--color-danger)' : 'transparent',
+                          borderColor: 'var(--color-border)',
+                          color: item.highlight ? 'white' : 'var(--color-danger)',
+                        }}
                         className={`inline-flex shrink-0 items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
-                          item.highlight
-                            ? 'bg-rose-600 text-white shadow-md shadow-rose-200 hover:bg-rose-700'
-                            : 'border border-rose-200 bg-white text-rose-700 hover:border-rose-400'
+                          item.highlight ? 'shadow-md hover:opacity-90' : 'border hover:border-[var(--color-danger)]'
                         }`}
                       >
                         <FaPhone />
@@ -79,12 +86,12 @@ function Emergency() {
             </div>
 
             {/* State-specific numbers */}
-            <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-              <div className="flex items-center gap-3 text-teal-700">
+            <div style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)' }} className="rounded-[2rem] border p-8 shadow-sm">
+              <div style={{ color: 'var(--color-accent)' }} className="flex items-center gap-3">
                 <FaAmbulance />
                 <h3 className="text-xl font-semibold">State-specific emergency numbers</h3>
               </div>
-              <p className="mt-2 text-sm text-slate-600">
+              <p style={{ color: 'var(--color-text-secondary)' }} className="mt-2 text-sm">
                 Select your state to see the local ambulance and helpline numbers.
               </p>
 
@@ -92,7 +99,8 @@ function Emergency() {
                 id="emergency-state-picker"
                 value={selectedState}
                 onChange={(e) => setSelectedState(e.target.value)}
-                className="mt-5 w-full rounded-full border border-slate-300 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-100"
+                style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
+                className="mt-5 w-full rounded-full border px-4 py-3 text-sm outline-none transition focus:border-[var(--color-accent)] focus:ring-4"
               >
                 <option value="">Select a state or UT…</option>
                 {INDIA_STATES.map((s) => (
@@ -105,18 +113,20 @@ function Emergency() {
                   {stateNumbers ? (
                     <div className="grid gap-3 sm:grid-cols-3">
                       {[
-                        { label: 'Ambulance', number: stateNumbers.ambulance, color: 'rose' },
-                        { label: 'Police',    number: stateNumbers.police,    color: 'blue' },
-                        { label: 'Helpline',  number: stateNumbers.helpline,  color: 'teal' },
-                      ].map(({ label, number, color }) => (
+                        { label: 'Ambulance', number: stateNumbers.ambulance, color: 'var(--color-danger)', lightColor: 'var(--color-danger-light)' },
+                        { label: 'Police', number: stateNumbers.police, color: 'var(--color-info)', lightColor: 'var(--color-info-light)' },
+                        { label: 'Helpline', number: stateNumbers.helpline, color: 'var(--color-accent)', lightColor: 'var(--color-accent-light)' },
+                      ].map(({ label, number, color, lightColor }) => (
                         <div
                           key={label}
-                          className={`rounded-2xl border bg-${color}-50 border-${color}-200 p-4 text-center`}
+                          style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', borderColor: color }}
+                          className="rounded-2xl border p-4 text-center"
                         >
-                          <p className={`text-xs font-semibold uppercase tracking-wide text-${color}-600`}>{label}</p>
+                          <p style={{ color: color }} className="text-xs font-semibold uppercase tracking-wide">{label}</p>
                           <a
                             href={`tel:${number}`}
-                            className={`mt-2 block text-2xl font-bold text-${color}-700 hover:underline`}
+                            style={{ color: color }}
+                            className="mt-2 block text-2xl font-bold hover:underline"
                           >
                             {number}
                           </a>
@@ -124,12 +134,12 @@ function Emergency() {
                       ))}
                     </div>
                   ) : (
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                    <div style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg-secondary)', color: 'var(--color-text-secondary)' }} className="rounded-2xl border p-4 text-sm">
                       No specific mapping found for <strong>{selectedState}</strong>. Use the national number{' '}
-                      <a href="tel:112" className="font-bold text-rose-600 hover:underline">112</a>.
+                      <a href="tel:112" style={{ color: 'var(--color-danger)' }} className="font-bold hover:underline">112</a>.
                     </div>
                   )}
-                  <p className="mt-3 text-xs text-slate-500">
+                  <p style={{ color: 'var(--color-text-light)' }} className="mt-3 text-xs">
                     Numbers sourced from government directories. Always verify locally.
                   </p>
                 </div>
@@ -139,24 +149,24 @@ function Emergency() {
 
           {/* Right: context panels */}
           <div className="space-y-6">
-            <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-              <div className="flex items-center gap-3 text-teal-700">
+            <div style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)' }} className="rounded-[2rem] border p-8 shadow-sm">
+              <div style={{ color: 'var(--color-accent)' }} className="flex items-center gap-3">
                 <FaShieldAlt />
                 <h3 className="text-xl font-semibold">Why MediTravel AI helps</h3>
               </div>
-              <p className="mt-4 text-sm leading-7 text-slate-600">
+              <p style={{ color: 'var(--color-text-secondary)' }} className="mt-4 text-sm leading-7">
                 The platform combines rapid triage guidance, hospital coordination, and support resources
                 to keep patients and travelers informed during urgent moments — whether you're in a tier-1
                 metro or a remote tier-3 town.
               </p>
             </div>
 
-            <div className="rounded-[2rem] border border-slate-200 bg-slate-900 p-8 text-white shadow-sm">
-              <div className="flex items-center gap-3 text-teal-300">
+            <div style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg-secondary)' }} className="rounded-[2rem] border p-8 shadow-sm">
+              <div style={{ color: 'var(--color-accent)' }} className="flex items-center gap-3">
                 <FaHeartbeat />
-                <h3 className="text-xl font-semibold">Fast care coordination</h3>
+                <h3 style={{ color: 'var(--color-text)' }} className="text-xl font-semibold">Fast care coordination</h3>
               </div>
-              <p className="mt-4 text-sm leading-7 text-slate-300">
+              <p style={{ color: 'var(--color-text-secondary)' }} className="mt-4 text-sm leading-7">
                 Reach local emergency support, navigate nearby hospitals, and prepare for next steps
                 without losing time — from Kashmir to Kanyakumari.
               </p>
@@ -167,9 +177,9 @@ function Emergency() {
                   ['38+', 'Hospitals'],
                   ['112', 'National SOS'],
                 ].map(([stat, label]) => (
-                  <div key={label} className="rounded-2xl bg-white/10 px-4 py-3">
-                    <p className="text-xl font-bold text-teal-300">{stat}</p>
-                    <p className="mt-0.5 text-xs text-slate-400">{label}</p>
+                  <div key={label} style={{ backgroundColor: 'rgba(var(--color-accent), 0.1)', borderColor: 'var(--color-border)' }} className="rounded-2xl border px-4 py-3">
+                    <p style={{ color: 'var(--color-accent)' }} className="text-xl font-bold">{stat}</p>
+                    <p style={{ color: 'var(--color-text-light)' }} className="mt-0.5 text-xs">{label}</p>
                   </div>
                 ))}
               </div>

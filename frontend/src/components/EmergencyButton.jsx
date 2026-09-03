@@ -3,7 +3,10 @@ import { FaAmbulance } from 'react-icons/fa';
 
 function EmergencyButton() {
   return (
-    <Link to="/emergency" className="fixed bottom-6 right-6 z-40 flex items-center gap-3 rounded-full bg-rose-600 px-5 py-3 text-sm font-semibold text-white shadow-2xl shadow-rose-200 transition hover:bg-rose-700">
+    <Link to="/emergency" style={{
+      backgroundColor: 'var(--color-danger)',
+      boxShadow: '0 20px 25px -5px rgba(220, 38, 38, 0.25)',
+    }} className="fixed bottom-6 right-6 z-40 flex items-center gap-3 rounded-full px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90">
       <FaAmbulance />
       Emergency Help
     </Link>

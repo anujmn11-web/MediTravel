@@ -6,10 +6,13 @@ import { getCitiesForState, hospitals, INDIA_STATES, getLocationMeta } from '../
 const mapDelta = 0.045;
 
 const TIER_LABELS = { 1: 'Metro', 2: 'Major City', 3: 'Town' };
-const TIER_COLORS = {
-  1: 'bg-violet-100 text-violet-700',
-  2: 'bg-sky-100 text-sky-700',
-  3: 'bg-amber-100 text-amber-700',
+const getTierStyles = (tier) => {
+  const colors = {
+    1: { bg: '#f3e8ff', text: '#9333ea' },
+    2: { bg: '#e0f2fe', text: '#0284c7' },
+    3: { bg: '#fef3c7', text: '#ca8a04' },
+  };
+  return colors[tier] || colors[1];
 };
 
 // Haversine formula to compute distance in kilometers between two coordinates
@@ -211,7 +214,7 @@ function Hospitals() {
   }, [selectedHospitalId, hospitalsWithDistance]);
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
+    <main style={{ backgroundColor: 'var(--color-bg)' }} className="min-h-screen px-4 py-20 sm:px-6 lg:px-8 transition-colors">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           eyebrow="Hospitals"
@@ -423,7 +426,7 @@ function Hospitals() {
               <div className="mt-8 space-y-4">
                 {filteredHospitals.map((hospital) => {
                   const isSelected = hospital.id === selectedHospital.id;
-                  const tierColor = TIER_COLORS[hospital.tier] || TIER_COLORS[2];
+                  const tierStyles = getTierStyles(hospital.tier);
                   const tierLabel = TIER_LABELS[hospital.tier] || 'City';
 
                   return (
@@ -469,7 +472,7 @@ function Hospitals() {
                           <span className="w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
                             {hospital.type}
                           </span>
-                          <span className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${tierColor}`}>
+                          <span className="w-fit rounded-full px-3 py-1 text-xs font-semibold" style={{ backgroundColor: tierStyles.bg, color: tierStyles.text }}>
                             {tierLabel}
                           </span>
                           {hospital.accreditation && (
@@ -549,9 +552,8 @@ function Hospitals() {
               </div>
               <div className="flex flex-col gap-1.5 items-start sm:items-end shrink-0">
                 <span
-                  className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${
-                    TIER_COLORS[selectedHospital.tier] || TIER_COLORS[2]
-                  }`}
+                  className="w-fit rounded-full px-3 py-1 text-xs font-semibold"
+                  style={{ backgroundColor: getTierStyles(selectedHospital.tier).bg, color: getTierStyles(selectedHospital.tier).text }}
                 >
                   {TIER_LABELS[selectedHospital.tier] || 'City'}
                 </span>

@@ -68,36 +68,36 @@ function MedicalHistory({ currentUser, onUserUpdate }) {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
+    <main style={{ backgroundColor: 'var(--color-bg)' }} className="min-h-screen px-4 py-20 sm:px-6 lg:px-8 transition-colors">
       <div className="mx-auto max-w-7xl">
         <SectionHeader eyebrow="Medical History" title="Keep your health profile current." description="Add new medical conditions whenever your health record changes so doctors can review better context." />
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
-          <aside className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <aside style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)' }} className="rounded-[2rem] border p-6 shadow-sm sm:p-8">
             <div className="flex items-center gap-4">
-              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 text-2xl text-teal-700">
+              <span style={{ backgroundColor: 'var(--color-accent-light)', color: 'var(--color-accent)' }} className="flex h-14 w-14 items-center justify-center rounded-2xl text-2xl">
                 <FaUserCircle />
               </span>
               <div>
-                <h2 className="text-xl font-semibold text-slate-900">{currentUser.fullName}</h2>
-                <p className="mt-1 text-sm text-slate-600">{currentUser.email}</p>
+                <h2 style={{ color: 'var(--color-text)' }} className="text-xl font-semibold">{currentUser.fullName}</h2>
+                <p style={{ color: 'var(--color-text-secondary)' }} className="mt-1 text-sm">{currentUser.email}</p>
               </div>
             </div>
 
             <div className="mt-8 grid gap-4 text-sm">
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="font-semibold text-slate-900">Location</p>
-                <p className="mt-1 text-slate-600">
+              <div style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg-secondary)' }} className="rounded-2xl border p-4">
+                <p style={{ color: 'var(--color-text)' }} className="font-semibold">Location</p>
+                <p style={{ color: 'var(--color-text-secondary)' }} className="mt-1">
                   {currentUser.city}
                   {currentUser.state ? `, ${currentUser.state}` : ''}
                 </p>
               </div>
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="font-semibold text-slate-900">Allergies</p>
-                <p className="mt-1 text-slate-600">{currentUser.allergies || 'Not added'}</p>
+              <div style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg-secondary)' }} className="rounded-2xl border p-4">
+                <p style={{ color: 'var(--color-text)' }} className="font-semibold">Allergies</p>
+                <p style={{ color: 'var(--color-text-secondary)' }} className="mt-1">{currentUser.allergies || 'Not added'}</p>
               </div>
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="font-semibold text-slate-900">Current medications</p>
+              <div style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg-secondary)' }} className="rounded-2xl border p-4">
+                <p style={{ color: 'var(--color-text)' }} className="font-semibold">Current medications</p>
                 <p className="mt-1 text-slate-600">{currentUser.medications || 'Not added'}</p>
               </div>
             </div>

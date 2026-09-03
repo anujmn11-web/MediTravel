@@ -14,10 +14,12 @@ import Login from './pages/Login';
 import RegisterDoctor from './pages/RegisterDoctor';
 import MedicalHistory from './pages/MedicalHistory';
 import { clearCurrentPatient, loadCurrentPatient, saveCurrentPatient } from './utils/patientStorage';
+import { useTheme } from './hooks/useTheme';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(loadCurrentPatient);
   const isAuthenticated = Boolean(currentUser);
+  const { theme } = useTheme();
 
   const handleLogin = (patient) => {
     setCurrentUser(saveCurrentPatient(patient));
@@ -33,7 +35,11 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div style={{
+      backgroundColor: 'var(--color-bg)',
+      color: 'var(--color-text)',
+      transition: 'background-color 200ms cubic-bezier(0.4, 0, 0.2, 1), color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+    }} className="min-h-screen">
       <Navbar currentUser={currentUser} onLogout={handleLogout} />
       <Routes>
         <Route path="/" element={<Home />} />
