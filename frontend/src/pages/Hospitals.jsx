@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { FaDirections, FaHospital, FaMapMarkerAlt, FaPhoneAlt, FaSpinner, FaLocationArrow, FaTimes, FaGlobeAsia } from 'react-icons/fa';
 import SectionHeader from '../components/SectionHeader';
 import { getCitiesForState, hospitals, INDIA_STATES, getLocationMeta } from '../data/content';
+import { getCurrentPosition } from '../utils/geolocation';
 
 const mapDelta = 0.045;
 
@@ -107,47 +108,26 @@ function Hospitals() {
     }
   };
 
-  const handleScanLocation = () => {
-    if (!navigator.geolocation) {
-      setScanError('Geolocation is not supported by your browser.');
-      return;
-    }
-
+  const handleScanLocation = async () => {
     setIsScanning(true);
     setScanError('');
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setUserCoords({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-          name: 'Your GPS location',
-          isManual: false,
-        });
-        setIsScanning(false);
-        // Clear filters to show nearest overall
-        setSelectedState('');
-        setSelectedCity('');
-      },
-      (error) => {
-        setIsScanning(false);
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            setScanError('Location permission denied. Please allow location access or use Manual selection.');
-            break;
-          case error.POSITION_UNAVAILABLE:
-            setScanError('Location information is unavailable.');
-            break;
-          case error.TIMEOUT:
-            setScanError('Location request timed out.');
-            break;
-          default:
-            setScanError('An unknown error occurred while retrieving location.');
-            break;
-        }
-      },
-      { enableHighAccuracy: true, timeout: 8000 }
-    );
+    try {
+      const coords = await getCurrentPosition();
+      setUserCoords({
+        lat: coords.latitude,
+        lng: coords.longitude,
+        name: 'Your GPS location',
+        isManual: false,
+      });
+      // Clear filters to show nearest overall
+      setSelectedState('');
+      setSelectedCity('');
+    } catch (error) {
+      setScanError(error.message || 'An unknown error occurred while retrieving location.');
+    } finally {
+      setIsScanning(false);
+    }
   };
 
   const handleClearLocation = () => {
