@@ -28,6 +28,13 @@ MediTravel is a full-stack web platform that simplifies medical travel by helpin
 | **JavaScript (ES6+)** | Core logic |
 | **CSS** | Styling & animations |
 
+### Mobile (Android)
+| Technology | Purpose |
+|---|---|
+| **React Native** | Cross-platform mobile framework |
+| **React Navigation** | Native tab & stack navigation |
+| **Android Studio / Gradle** | Native Android compilation |
+
 ### Backend
 | Technology | Purpose |
 |---|---|
@@ -41,26 +48,11 @@ MediTravel is a full-stack web platform that simplifies medical travel by helpin
 
 ```
 MediTravel/
-├── frontend/               # React + Vite frontend
-│   └── src/
-│       ├── pages/          # Route-level pages
-│       │   ├── Home.jsx
-│       │   ├── Hospitals.jsx
-│       │   ├── Doctors.jsx
-│       │   ├── MedicalHistory.jsx
-│       │   ├── Emergency.jsx
-│       │   ├── Login.jsx
-│       │   ├── About.jsx
-│       │   ├── Contact.jsx
-│       │   └── RegisterDoctor.jsx
-│       ├── components/     # Reusable UI components
-│       ├── data/           # Static data & content
-│       ├── services/       # API service calls
-│       └── utils/          # Utility helpers
+├── frontend/               # React + Vite web application
+├── mobile/                 # React Native Android Mobile App
+│   ├── android/            # Native Gradle project for Android Studio
+│   └── src/                # Mobile navigation, screens & API services
 ├── backend/                # Python backend
-│   ├── routes/             # API route handlers
-│   ├── models/             # Data models
-│   └── database/           # Database configuration
 ├── MediTravel-AI/          # AI assistant module (WIP)
 ├── package.json            # Root scripts
 └── README.md
