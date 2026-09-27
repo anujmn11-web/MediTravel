@@ -238,30 +238,27 @@ a:hover {
   display: none;
 }
 .btn-55 {
-  background: linear-gradient(90deg, #dc2626, #991b1b);
+  background: linear-gradient(90deg, blue, red);
   border-radius: 999px;
   box-sizing: border-box;
   color: #000;
   display: block;
   font-weight: 900;
   overflow: hidden;
-  padding: 1rem 2rem;
+  padding: 1.8rem 5rem;
   position: relative;
   text-transform: uppercase;
-  text-decoration: none !important;
 }
 .btn-55 span {
   background: #1e293b;
   border-radius: 999px;
   color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  inset: 3px;
+  display: grid;
+  inset: 5px;
+  place-items: center;
   position: absolute;
-  justify-content: center;
   transition: background 0.3s;
 }
 .btn-55:hover span {
-  background: transparent;
+  background: none;
 }
