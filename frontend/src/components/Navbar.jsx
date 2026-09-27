@@ -30,7 +30,7 @@ function Navbar({ currentUser, onLogout }) {
     }}>
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-3 text-lg font-semibold transition-colors hover:opacity-80">
-          <span style={{ backgroundColor: 'var(--color-accent)' }} className="flex h-10 w-10 items-center justify-center rounded-2xl text-white shadow-lg transition">
+          <span style={{ backgroundColor: 'var(--color-accent)', color: '#ffffff' }} className="flex h-10 w-10 items-center justify-center rounded-2xl shadow-lg transition">
             <FaHeartbeat />
           </span>
           <span className="text-xl font-semibold tracking-tight">MediTravel AI</span>
@@ -100,10 +100,10 @@ function Navbar({ currentUser, onLogout }) {
           {currentUser ? (
             <>
               <Link to="/medical-history" className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition hover:text-[var(--color-accent)] hover:border-[var(--color-accent)]">{firstName}</Link>
-              <button type="button" onClick={handleLogout} style={{ backgroundColor: 'var(--color-accent)' }} className="rounded-full px-4 py-2 text-sm font-semibold text-white shadow-lg transition hover:opacity-90">Logout</button>
+              <button type="button" onClick={handleLogout} style={{ backgroundColor: 'var(--color-accent)', color: '#ffffff' }} className="rounded-full px-4 py-2 text-sm font-semibold shadow-lg transition hover:opacity-90">Logout</button>
             </>
           ) : (
-            <Link to="/login" style={{ backgroundColor: 'var(--color-accent)' }} className="rounded-full px-5 py-2 text-sm font-semibold text-white shadow-lg transition hover:opacity-90">Login / Sign Up</Link>
+            <Link to="/login" style={{ backgroundColor: 'var(--color-accent)', color: '#ffffff', textDecoration: 'none' }} className="rounded-full px-5 py-2 text-sm font-semibold shadow-lg transition hover:opacity-90">Login / Sign Up</Link>
           )}
         </div>
 
@@ -131,9 +131,9 @@ function Navbar({ currentUser, onLogout }) {
               </button>
             </div>
             {currentUser ? (
-              <button type="button" onClick={handleLogout} style={{ backgroundColor: 'var(--color-accent)' }} className="rounded-full px-4 py-2 text-center text-sm font-semibold text-white">Logout</button>
+              <button type="button" onClick={handleLogout} style={{ backgroundColor: 'var(--color-accent)', color: '#ffffff' }} className="rounded-full px-4 py-2 text-center text-sm font-semibold">Logout</button>
             ) : (
-              <Link to="/login" onClick={() => setIsOpen(false)} style={{ backgroundColor: 'var(--color-accent)' }} className="rounded-full px-4 py-2 text-center text-sm font-semibold text-white">Login / Sign Up</Link>
+              <Link to="/login" onClick={() => setIsOpen(false)} style={{ backgroundColor: 'var(--color-accent)', color: '#ffffff', textDecoration: 'none' }} className="rounded-full px-4 py-2 text-center text-sm font-semibold">Login / Sign Up</Link>
             )}
           </div>
         </div>

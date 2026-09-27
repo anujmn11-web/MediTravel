@@ -17,7 +17,7 @@ function HeroSection() {
           <h1 className="mt-6 text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl" style={{ color: 'var(--color-text)' }}>Find trusted healthcare anywhere you travel.</h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 sm:text-xl" style={{ color: 'var(--color-text-secondary)' }}>Locate verified doctors, nearby hospitals, and emergency care in seconds with a modern experience built for global travelers.</p>
           <div className="mt-8 flex flex-wrap gap-4">
-            <Link style={{ backgroundColor: 'var(--color-accent)' }} to="/doctors" className="rounded-full px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">Find Doctors</Link>
+            <Link style={{ backgroundColor: 'var(--color-accent)', color: '#ffffff', textDecoration: 'none' }} to="/doctors" className="rounded-full px-6 py-3 text-sm font-semibold transition hover:opacity-90">Find Doctors</Link>
             <Link style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)', color: 'var(--color-accent)' }} to="/emergency" className="rounded-full border px-6 py-3 text-sm font-semibold transition hover:opacity-80">Emergency Help</Link>
           </div>
           <div className="mt-10"><SearchBar /></div>
