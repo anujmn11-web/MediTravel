@@ -1,9 +1,25 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaPlus, FaSpinner, FaUserShield } from 'react-icons/fa';
+import { FaPhoneAlt, FaPlus, FaSpinner, FaTrashAlt, FaUserFriends, FaUserShield } from 'react-icons/fa';
 import SectionHeader from '../components/SectionHeader';
 import { createCondition, findPatient } from '../utils/patientStorage';
 import { getCitiesForState, INDIA_STATES } from '../data/content';
+
+const RELATIONSHIP_OPTIONS = [
+  'Parent',
+  'Spouse',
+  'Sibling',
+  'Child',
+  'Guardian',
+  'Friend',
+  'Other',
+];
+
+const emptyEmergencyContactForm = {
+  ecName: '',
+  ecPhone: '',
+  ecRelationship: '',
+};
 
 const emptyLoginForm = {
   email: '',
@@ -32,6 +48,8 @@ function Login({ onLogin }) {
   const [signupForm, setSignupForm] = useState(emptySignupForm);
   const [conditionForm, setConditionForm] = useState(emptyConditionForm);
   const [signupConditions, setSignupConditions] = useState([]);
+  const [emergencyContactForm, setEmergencyContactForm] = useState(emptyEmergencyContactForm);
+  const [signupEmergencyContacts, setSignupEmergencyContacts] = useState([]);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -40,6 +58,12 @@ function Login({ onLogin }) {
     if (signupConditions.length === 1) return '1 condition added';
     return `${signupConditions.length} conditions added`;
   }, [signupConditions.length]);
+
+  const emergencyContactCountLabel = useMemo(() => {
+    if (signupEmergencyContacts.length === 0) return 'No contacts added yet';
+    if (signupEmergencyContacts.length === 1) return '1 contact added';
+    return `${signupEmergencyContacts.length} contacts added`;
+  }, [signupEmergencyContacts.length]);
 
   const updateLoginField = (event) => {
     const { name, value } = event.target;
@@ -67,6 +91,52 @@ function Login({ onLogin }) {
       delete nextErrors.conditions;
       return nextErrors;
     });
+  };
+
+  const updateEmergencyContactField = (event) => {
+    const { name, value } = event.target;
+    setEmergencyContactForm((f) => ({ ...f, [name]: value }));
+    setErrors((currentErrors) => {
+      if (!currentErrors.emergencyContacts) return currentErrors;
+      const nextErrors = { ...currentErrors };
+      delete nextErrors.emergencyContacts;
+      return nextErrors;
+    });
+  };
+
+  const addSignupEmergencyContact = () => {
+    const ecName = emergencyContactForm.ecName.trim();
+    const ecPhone = emergencyContactForm.ecPhone.trim();
+    const ecRelationship = emergencyContactForm.ecRelationship;
+
+    if (!ecName) {
+      setErrors((e) => ({ ...e, emergencyContacts: 'Enter the contact person\'s name.' }));
+      return;
+    }
+    if (!ecPhone || ecPhone.replace(/\D/g, '').length < 10) {
+      setErrors((e) => ({ ...e, emergencyContacts: 'Enter a valid phone number (at least 10 digits).' }));
+      return;
+    }
+    if (!ecRelationship) {
+      setErrors((e) => ({ ...e, emergencyContacts: 'Select a relationship.' }));
+      return;
+    }
+
+    setSignupEmergencyContacts((prev) => [
+      ...prev,
+      {
+        id: `ec-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        name: ecName,
+        phone: ecPhone,
+        relationship: ecRelationship,
+        addedAt: new Date().toISOString(),
+      },
+    ]);
+    setEmergencyContactForm(emptyEmergencyContactForm);
+  };
+
+  const removeSignupEmergencyContact = (contactId) => {
+    setSignupEmergencyContacts((prev) => prev.filter((c) => c.id !== contactId));
   };
 
   const addSignupCondition = () => {
@@ -135,6 +205,7 @@ function Login({ onLogin }) {
         allergies: signupForm.allergies.trim(),
         medications: signupForm.medications.trim(),
         medicalConditions: signupConditions,
+        emergencyContacts: signupEmergencyContacts,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -317,6 +388,104 @@ function Login({ onLogin }) {
                             {condition.details && <p style={{ color: 'var(--color-text-secondary)' }} className="mt-1 text-sm">{condition.details}</p>}
                           </div>
                           <button type="button" onClick={() => removeSignupCondition(condition.id)} style={{ color: 'var(--color-danger)' }} className="text-xs font-semibold">Remove</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* ── Guardian / Emergency Contacts ────────────────────── */}
+              <div style={{ borderColor: 'var(--color-danger-light)', backgroundColor: 'var(--color-danger-light)' }} className="rounded-3xl border p-5">
+                <div style={{ color: 'var(--color-danger)' }} className="flex items-center gap-3">
+                  <FaUserFriends />
+                  <h2 style={{ color: 'var(--color-text)' }} className="text-lg font-semibold">Guardian / emergency contacts</h2>
+                </div>
+                <p style={{ color: 'var(--color-text-secondary)' }} className="mt-2 text-sm">{emergencyContactCountLabel}</p>
+
+                <div className="mt-5 grid gap-3">
+                  <input
+                    name="ecName"
+                    value={emergencyContactForm.ecName}
+                    onChange={updateEmergencyContactField}
+                    placeholder="Contact person's name"
+                    style={{
+                      borderColor: errors.emergencyContacts ? 'var(--color-danger)' : 'var(--color-border)',
+                      backgroundColor: 'var(--color-surface)',
+                      color: 'var(--color-text)',
+                    }}
+                    className="rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4"
+                  />
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <input
+                      name="ecPhone"
+                      type="tel"
+                      value={emergencyContactForm.ecPhone}
+                      onChange={updateEmergencyContactField}
+                      placeholder="Phone: +91 98765 43210"
+                      style={{
+                        borderColor: errors.emergencyContacts ? 'var(--color-danger)' : 'var(--color-border)',
+                        backgroundColor: 'var(--color-surface)',
+                        color: 'var(--color-text)',
+                      }}
+                      className="rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4"
+                    />
+                    <select
+                      name="ecRelationship"
+                      value={emergencyContactForm.ecRelationship}
+                      onChange={updateEmergencyContactField}
+                      style={{
+                        borderColor: errors.emergencyContacts ? 'var(--color-danger)' : 'var(--color-border)',
+                        backgroundColor: 'var(--color-surface)',
+                        color: 'var(--color-text)',
+                      }}
+                      className="rounded-2xl border px-4 py-3 text-sm outline-none transition focus:ring-4"
+                    >
+                      <option value="">Relationship…</option>
+                      {RELATIONSHIP_OPTIONS.map((r) => (
+                        <option key={r} value={r}>{r}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {errors.emergencyContacts && <span style={{ color: 'var(--color-danger)' }} className="text-xs font-medium">{errors.emergencyContacts}</span>}
+                  <button
+                    type="button"
+                    onClick={addSignupEmergencyContact}
+                    style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)', color: 'var(--color-danger)' }}
+                    className="inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 text-sm font-semibold transition hover:opacity-80"
+                  >
+                    <FaPlus />
+                    Add emergency contact
+                  </button>
+                </div>
+
+                {signupEmergencyContacts.length > 0 && (
+                  <div className="mt-5 space-y-3">
+                    {signupEmergencyContacts.map((contact) => (
+                      <div key={contact.id} style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)' }} className="rounded-2xl border p-4">
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <span
+                              style={{ backgroundColor: 'var(--color-danger)', color: 'white' }}
+                              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                            >
+                              {contact.name.charAt(0).toUpperCase()}
+                            </span>
+                            <div>
+                              <p style={{ color: 'var(--color-text)' }} className="font-semibold text-sm">{contact.name}</p>
+                              <p style={{ color: 'var(--color-text-secondary)' }} className="text-xs">
+                                {contact.relationship} · <FaPhoneAlt className="inline text-[10px]" /> {contact.phone}
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeSignupEmergencyContact(contact.id)}
+                            style={{ color: 'var(--color-danger)' }}
+                            className="text-xs font-semibold hover:opacity-70"
+                          >
+                            <FaTrashAlt />
+                          </button>
                         </div>
                       </div>
                     ))}

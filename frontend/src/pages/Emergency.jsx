@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
-import { FaAmbulance, FaHeartbeat, FaPhone, FaPhoneAlt, FaShieldAlt } from 'react-icons/fa';
+import { useEffect, useMemo, useState } from 'react';
+import { FaAmbulance, FaCheckCircle, FaHeartbeat, FaPhone, FaPhoneAlt, FaPlus, FaShieldAlt, FaSpinner, FaTrashAlt, FaUserFriends } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import SectionHeader from '../components/SectionHeader';
 import { INDIA_STATES, stateEmergencyNumbers } from '../data/content';
 
@@ -24,13 +25,102 @@ const nationalHotlines = [
   },
 ];
 
-function Emergency() {
+const RELATIONSHIP_OPTIONS = [
+  'Parent',
+  'Spouse',
+  'Sibling',
+  'Child',
+  'Guardian',
+  'Friend',
+  'Other',
+];
+
+const emptyContactForm = {
+  name: '',
+  phone: '',
+  relationship: '',
+};
+
+function Emergency({ currentUser, onUserUpdate }) {
   const [selectedState, setSelectedState] = useState('');
+  const [contactForm, setContactForm] = useState(emptyContactForm);
+  const [isAdding, setIsAdding] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [toast, setToast] = useState('');
 
   const stateNumbers = useMemo(
     () => (selectedState ? stateEmergencyNumbers[selectedState] || null : null),
     [selectedState],
   );
+
+  const guardianContacts = useMemo(
+    () => currentUser?.emergencyContacts || [],
+    [currentUser],
+  );
+
+  useEffect(() => {
+    if (!toast) return undefined;
+    const timer = window.setTimeout(() => setToast(''), 3200);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
+
+  const updateContactField = (event) => {
+    const { name, value } = event.target;
+    setContactForm((f) => ({ ...f, [name]: value }));
+    setFormError('');
+  };
+
+  const addGuardianContact = (event) => {
+    event.preventDefault();
+
+    if (!contactForm.name.trim()) {
+      setFormError('Enter the contact person\'s name.');
+      return;
+    }
+    if (!contactForm.phone.trim() || contactForm.phone.replace(/\D/g, '').length < 10) {
+      setFormError('Enter a valid phone number (at least 10 digits).');
+      return;
+    }
+    if (!contactForm.relationship) {
+      setFormError('Select a relationship.');
+      return;
+    }
+
+    setIsSaving(true);
+    window.setTimeout(() => {
+      const newContact = {
+        id: `ec-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        name: contactForm.name.trim(),
+        phone: contactForm.phone.trim(),
+        relationship: contactForm.relationship,
+        addedAt: new Date().toISOString(),
+      };
+
+      const updatedUser = {
+        ...currentUser,
+        emergencyContacts: [newContact, ...guardianContacts],
+        updatedAt: new Date().toISOString(),
+      };
+
+      onUserUpdate(updatedUser);
+      setContactForm(emptyContactForm);
+      setIsAdding(false);
+      setIsSaving(false);
+      setToast(`${newContact.name} added as emergency contact.`);
+    }, 400);
+  };
+
+  const removeGuardianContact = (contactId) => {
+    const contact = guardianContacts.find((c) => c.id === contactId);
+    const updatedUser = {
+      ...currentUser,
+      emergencyContacts: guardianContacts.filter((c) => c.id !== contactId),
+      updatedAt: new Date().toISOString(),
+    };
+    onUserUpdate(updatedUser);
+    setToast(`${contact?.name || 'Contact'} removed.`);
+  };
 
   return (
     <main style={{ backgroundColor: 'var(--color-bg)' }} className="min-h-screen px-4 py-20 sm:px-6 lg:px-8 transition-colors">
@@ -145,6 +235,241 @@ function Emergency() {
                 </div>
               )}
             </div>
+
+            {/* ── Guardian / Emergency Contacts (custom, per-patient) ──────── */}
+            <div
+              style={{
+                borderColor: 'var(--color-border)',
+                backgroundColor: 'var(--color-surface)',
+                background: currentUser
+                  ? 'linear-gradient(135deg, var(--color-surface) 0%, rgba(20, 184, 166, 0.04) 100%)'
+                  : 'var(--color-surface)',
+              }}
+              className="rounded-[2rem] border p-8 shadow-sm"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div style={{ color: 'var(--color-accent)' }} className="flex items-center gap-3">
+                  <FaUserFriends />
+                  <h3 className="text-xl font-semibold">Guardian / emergency contacts</h3>
+                </div>
+                {currentUser && !isAdding && (
+                  <button
+                    type="button"
+                    onClick={() => setIsAdding(true)}
+                    style={{
+                      backgroundColor: 'var(--color-accent)',
+                      color: 'white',
+                    }}
+                    className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold shadow-md transition hover:opacity-90"
+                  >
+                    <FaPlus />
+                    Add contact
+                  </button>
+                )}
+              </div>
+              <p style={{ color: 'var(--color-text-secondary)' }} className="mt-2 text-sm">
+                {currentUser
+                  ? 'Your personal emergency contacts — family members, guardians, or caregivers who should be reached first.'
+                  : 'Sign in to save custom emergency contacts for your family and guardians.'}
+              </p>
+
+              {!currentUser ? (
+                /* ── Not logged in: prompt ── */
+                <div
+                  style={{
+                    borderColor: 'var(--color-border)',
+                    backgroundColor: 'var(--color-bg-secondary)',
+                  }}
+                  className="mt-6 rounded-2xl border p-6 text-center"
+                >
+                  <FaUserFriends style={{ color: 'var(--color-text-light)' }} className="mx-auto text-3xl" />
+                  <p style={{ color: 'var(--color-text-secondary)' }} className="mt-3 text-sm">
+                    Create a patient account to add and manage your personal emergency contacts.
+                  </p>
+                  <Link
+                    to="/login"
+                    style={{
+                      backgroundColor: 'var(--color-accent)',
+                      color: 'white',
+                    }}
+                    className="mt-4 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold shadow-md transition hover:opacity-90"
+                  >
+                    Login / Sign Up
+                  </Link>
+                </div>
+              ) : (
+                <>
+                  {/* ── Add contact form (expandable) ── */}
+                  {isAdding && (
+                    <form
+                      onSubmit={addGuardianContact}
+                      style={{
+                        borderColor: 'var(--color-accent)',
+                        backgroundColor: 'var(--color-bg-secondary)',
+                      }}
+                      className="mt-5 rounded-2xl border p-5"
+                    >
+                      <div className="grid gap-4 sm:grid-cols-3">
+                        <label style={{ color: 'var(--color-text)' }} className="grid gap-2 text-sm font-medium">
+                          Contact name
+                          <input
+                            name="name"
+                            value={contactForm.name}
+                            onChange={updateContactField}
+                            placeholder="e.g. Rajesh Sharma"
+                            style={{
+                              borderColor: 'var(--color-border)',
+                              backgroundColor: 'var(--color-surface)',
+                              color: 'var(--color-text)',
+                            }}
+                            className="rounded-xl border px-4 py-3 text-sm outline-none transition focus:border-[var(--color-accent)] focus:ring-4"
+                          />
+                        </label>
+                        <label style={{ color: 'var(--color-text)' }} className="grid gap-2 text-sm font-medium">
+                          Phone number
+                          <input
+                            name="phone"
+                            type="tel"
+                            value={contactForm.phone}
+                            onChange={updateContactField}
+                            placeholder="e.g. +91 98765 43210"
+                            style={{
+                              borderColor: 'var(--color-border)',
+                              backgroundColor: 'var(--color-surface)',
+                              color: 'var(--color-text)',
+                            }}
+                            className="rounded-xl border px-4 py-3 text-sm outline-none transition focus:border-[var(--color-accent)] focus:ring-4"
+                          />
+                        </label>
+                        <label style={{ color: 'var(--color-text)' }} className="grid gap-2 text-sm font-medium">
+                          Relationship
+                          <select
+                            name="relationship"
+                            value={contactForm.relationship}
+                            onChange={updateContactField}
+                            style={{
+                              borderColor: 'var(--color-border)',
+                              backgroundColor: 'var(--color-surface)',
+                              color: 'var(--color-text)',
+                            }}
+                            className="rounded-xl border px-4 py-3 text-sm outline-none transition focus:border-[var(--color-accent)] focus:ring-4"
+                          >
+                            <option value="">Select…</option>
+                            {RELATIONSHIP_OPTIONS.map((r) => (
+                              <option key={r} value={r}>{r}</option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
+
+                      {formError && (
+                        <p style={{ color: 'var(--color-danger)' }} className="mt-3 text-xs font-semibold">{formError}</p>
+                      )}
+
+                      <div className="mt-4 flex items-center gap-3">
+                        <button
+                          type="submit"
+                          disabled={isSaving}
+                          style={{
+                            backgroundColor: 'var(--color-accent)',
+                            color: 'white',
+                          }}
+                          className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-md transition hover:opacity-90 disabled:opacity-50"
+                        >
+                          {isSaving ? <FaSpinner className="animate-spin" /> : <FaPlus />}
+                          {isSaving ? 'Saving…' : 'Save contact'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsAdding(false);
+                            setContactForm(emptyContactForm);
+                            setFormError('');
+                          }}
+                          style={{
+                            borderColor: 'var(--color-border)',
+                            color: 'var(--color-text-secondary)',
+                          }}
+                          className="inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition hover:opacity-80"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  )}
+
+                  {/* ── Contact list ── */}
+                  {guardianContacts.length === 0 ? (
+                    <div
+                      style={{
+                        borderColor: 'var(--color-border)',
+                        backgroundColor: 'var(--color-bg-secondary)',
+                        color: 'var(--color-text-secondary)',
+                      }}
+                      className="mt-5 rounded-2xl border border-dashed p-8 text-center text-sm"
+                    >
+                      No guardian contacts saved yet. Tap "Add contact" to save your first one.
+                    </div>
+                  ) : (
+                    <div className="mt-5 space-y-3">
+                      {guardianContacts.map((contact) => (
+                        <div
+                          key={contact.id}
+                          style={{
+                            borderColor: 'var(--color-border)',
+                            backgroundColor: 'var(--color-bg-secondary)',
+                          }}
+                          className="flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                          <div className="flex items-center gap-4">
+                            <span
+                              style={{
+                                backgroundColor: 'var(--color-accent)',
+                                color: 'white',
+                              }}
+                              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold"
+                            >
+                              {contact.name.charAt(0).toUpperCase()}
+                            </span>
+                            <div>
+                              <p style={{ color: 'var(--color-text)' }} className="font-semibold">
+                                {contact.name}
+                              </p>
+                              <p style={{ color: 'var(--color-text-secondary)' }} className="mt-0.5 text-xs">
+                                {contact.relationship}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <a
+                              href={`tel:${contact.phone.replace(/[^\d+]/g, '')}`}
+                              style={{
+                                borderColor: 'var(--color-accent)',
+                                color: 'var(--color-accent)',
+                              }}
+                              className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition hover:opacity-80"
+                            >
+                              <FaPhone />
+                              {contact.phone}
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => removeGuardianContact(contact.id)}
+                              style={{ color: 'var(--color-danger)' }}
+                              className="rounded-full p-2 text-sm transition hover:opacity-70"
+                              title="Remove contact"
+                            >
+                              <FaTrashAlt />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           </div>
 
           {/* Right: context panels */}
@@ -187,6 +512,22 @@ function Emergency() {
           </div>
         </div>
       </div>
+
+      {/* ── Toast notification ── */}
+      {toast && (
+        <div
+          style={{
+            borderColor: 'var(--color-accent-light)',
+            backgroundColor: 'var(--color-surface)',
+            color: 'var(--color-accent)',
+          }}
+          className="fixed right-4 top-24 z-[80] flex max-w-sm items-start gap-3 rounded-2xl border p-4 text-sm shadow-xl"
+          role="status"
+        >
+          <FaCheckCircle className="mt-0.5 shrink-0" />
+          <span>{toast}</span>
+        </div>
+      )}
     </main>
   );
 }
